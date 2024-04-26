@@ -40,17 +40,16 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        const captcha = document.getElementById('captcha').value;
         
         localStorage.removeItem('csrf');
         localStorage.removeItem('srid');
 
         function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
             const csrf = localStorage.getItem('csrf');
             const srid = localStorage.getItem('srid');
+            const captcha = document.getElementById('captcha').value;
 
             axios.post('https://jnckmedia.com/newsrlogin.php',
                     `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}${csrf ? `&csrf=${encodeURIComponent(csrf)}` : ''}${srid ? `&cookie=${encodeURIComponent(srid)}` : ''}${captcha ? `&captcha=${encodeURIComponent(captcha)}` : ''}`, {
@@ -61,8 +60,7 @@
                 )
                 .then(function(response) {
                     if (response.data.success) {
-                        const jsonStr = response.data;
-                        const jsonObj = JSON.parse(jsonStr);
+                        const jsonObj = response.data;
                         jsonObj.srUser = username;
                         jsonObj.srPass = password;
                         const updatedJsonStr = JSON.stringify(jsonObj);
@@ -101,7 +99,7 @@
         }
 
         // Event listener untuk tombol Enter pada input password
-        password.addEventListener("keypress", function(event) {
+        document.getElementById("password").addEventListener("keypress", function(event) {
             if (event.keyCode === 13) {
                 event.preventDefault(); // Mencegah default action (submit form)
                 login(); // Panggil fungsi login() saat tombol Enter ditekan
