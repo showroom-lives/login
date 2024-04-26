@@ -98,13 +98,14 @@
                 });
         }
 
-        // Event listener untuk tombol Enter pada input password
-        document.getElementById("password").addEventListener("keypress", function(event) {
-            if (event.keyCode === 13) {
-                event.preventDefault(); // Mencegah default action (submit form)
-                login(); // Panggil fungsi login() saat tombol Enter ditekan
+        window.addEventListener('resize', function() {
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+                window.setTimeout(function() {
+                    document.activeElement.scrollIntoViewIfNeeded();
+                }, 0);
             }
         });
+
     </script>
 
 </body>
