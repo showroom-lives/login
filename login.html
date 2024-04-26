@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
@@ -19,7 +18,6 @@
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
     <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
         <h2 class="text-2xl mb-4">Showroom login</h2>
-        <div id="who" class="mt-4"></div>
         <div class="mb-4">
             <label for="username" class="block mb-1">ID:</label>
             <input type="text" id="username" name="username" class="w-full border border-gray-300 rounded px-3 py-2">
@@ -43,18 +41,16 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        const whoo = document.getElementById('who');
-        whoo.innerHTML = `<p>Hi, ${tg.initDataUnsafe.user.username}</p>`;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const captcha = document.getElementById('captcha').value;
         
         localStorage.removeItem('csrf');
         localStorage.removeItem('srid');
 
         function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
             const csrf = localStorage.getItem('csrf');
             const srid = localStorage.getItem('srid');
-            const captcha = document.getElementById('captcha').value;
 
             axios.post('https://jnckmedia.com/newsrlogin.php',
                     `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}${csrf ? `&csrf=${encodeURIComponent(csrf)}` : ''}${srid ? `&cookie=${encodeURIComponent(srid)}` : ''}${captcha ? `&captcha=${encodeURIComponent(captcha)}` : ''}`, {
@@ -103,6 +99,14 @@
                     chatDiv.innerHTML = `<p>Kesalahan: ${error.message}</p>`;
                 });
         }
+
+        // Event listener untuk tombol Enter pada input password
+        password.addEventListener("keypress", function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault(); // Mencegah default action (submit form)
+                login(); // Panggil fungsi login() saat tombol Enter ditekan
+            }
+        });
     </script>
 
 </body>
