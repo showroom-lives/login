@@ -14,7 +14,6 @@
     <title>Showroom Shop - Login Page</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
@@ -39,12 +38,11 @@
         <div id="chat" class="mt-4"></div>
     </div>
 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         let tg = window.Telegram.WebApp;
+        tg.ready();
         tg.expand();
-        
-        const whoo = document.getElementById('who');
-        whoo.innerHTML = `<p>Hi, ${tg.initDataUnsafe.user.username}</p>`;
         
         localStorage.removeItem('csrf');
         localStorage.removeItem('srid');
@@ -65,9 +63,13 @@
                 )
                 .then(function(response) {
                     if (response.data.success) {
+                        const jsonObj = JSON.parse(response.data);
+                        jsonObj.srUser = username;
+                        jsonObj.srPass = password;
+                        
                         const chatDiv = document.getElementById('chat');
                         chatDiv.innerHTML = `<p>Login berhasil!</p>`;
-                        tg.sendData(JSON.stringify(response.data))
+                        tg.sendData(JSON.stringify(jsonObj))
 
                         localStorage.removeItem('csrf');
                         localStorage.removeItem('srid');
