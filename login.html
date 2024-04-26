@@ -101,11 +101,12 @@
                 });
         }
 
-        window.addEventListener('resize', function() {
-            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-                window.setTimeout(function() {
-                    document.activeElement.scrollIntoViewIfNeeded();
-                }, 0);
+        document.addEventListener('click', function(event) {
+            if (event.target.tagName !== 'INPUT' && event.target.id !== 'captcha') {
+                const inputs = document.querySelectorAll('input');
+                inputs.forEach(function(input) {
+                    input.blur();
+                });
             }
         });
 
