@@ -41,7 +41,7 @@
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand();
+        app.ready();
 
         const whoo = document.getElementById('who');
         whoo.innerHTML = `<p>Hi, ${tg.initDataUnsafe.user.username}</p>`;
