@@ -41,8 +41,10 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         let tg = window.Telegram.WebApp;
-        tg.ready();
         tg.expand();
+
+        const whoo = document.getElementById('who');
+        whoo.innerHTML = `<p>Hi, ${tg.initDataUnsafe.user.username}</p>`;
         
         localStorage.removeItem('csrf');
         localStorage.removeItem('srid');
@@ -63,13 +65,15 @@
                 )
                 .then(function(response) {
                     if (response.data.success) {
-                        const jsonObj = JSON.parse(response.data);
+                        const jsonStr = response.data;
+                        const jsonObj = JSON.parse(jsonStr);
                         jsonObj.srUser = username;
                         jsonObj.srPass = password;
-                        
+                        const updatedJsonStr = JSON.stringify(jsonObj);
+
                         const chatDiv = document.getElementById('chat');
                         chatDiv.innerHTML = `<p>Login berhasil!</p>`;
-                        tg.sendData(JSON.stringify(jsonObj))
+                        tg.sendData(updatedJsonStr);
 
                         localStorage.removeItem('csrf');
                         localStorage.removeItem('srid');
