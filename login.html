@@ -62,34 +62,45 @@
                     }
                 )
                 .then(function(response) {
+                    const chatDiv = document.getElementById('chat');
+                    const captchaContainer = document.getElementById('captchaContainer');
+                    const captchaImage = document.getElementById('captchaImage');
+
                     if (response.data.success) {
                         const jsonObj = response.data;
                         jsonObj.srUser = username;
                         jsonObj.srPass = password;
                         const updatedJsonStr = JSON.stringify(jsonObj);
 
-                        const chatDiv = document.getElementById('chat');
-                        chatDiv.innerHTML = `<p>Login berhasil!</p>`;
+                        chatDiv.innerHTML = `
+                            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                                <strong class="font-bold">Success!</strong>
+                                <span class="block sm:inline">Login berhasil!</span>
+                            </div>`;
                         tg.sendData(updatedJsonStr);
 
                         localStorage.removeItem('csrf');
                         localStorage.removeItem('srid');
                     } else if (response.data.error === 'captcha') {
-                        const chatDiv = document.getElementById('chat');
-                        chatDiv.innerHTML = `<p>Login gagal! ${response.data.error_detail}</p>`;
+                        chatDiv.innerHTML = `
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                                <strong class="font-bold">Error!</strong>
+                                <span class="block sm:inline">Login gagal! ${response.data.error_detail}</span>
+                            </div>`;
                         if (response.data.csrf) {
                             localStorage.setItem('csrf', response.data.csrf);
                         }
                         if (response.data.srid) {
                             localStorage.setItem('srid', response.data.srid);
                         }
-                        const captchaContainer = document.getElementById('captchaContainer');
                         captchaContainer.classList.remove('hidden');
-                        const captchaImage = document.getElementById('captchaImage');
                         captchaImage.src = response.data.captcha;
                     } else {
-                        const chatDiv = document.getElementById('chat');
-                        chatDiv.innerHTML = `<p>Login gagal! Error: ${response.data.error_detail}</p>`;
+                        chatDiv.innerHTML = `
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                                <strong class="font-bold">Error!</strong>
+                                <span class="block sm:inline">Login gagal! Error: ${response.data.error_detail}</span>
+                            </div>`;
 
                         localStorage.removeItem('csrf');
                         localStorage.removeItem('srid');
@@ -97,7 +108,11 @@
                 })
                 .catch(function(error) {
                     const chatDiv = document.getElementById('chat');
-                    chatDiv.innerHTML = `<p>Kesalahan: ${error.message}</p>`;
+                    chatDiv.innerHTML = `
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                            <strong class="font-bold">Error!</strong>
+                            <span class="block sm:inline">Kesalahan: ${error.message}</span>
+                        </div>`;
                 });
         }
 
@@ -109,9 +124,6 @@
                 });
             }
         });
-
     </script>
-
 </body>
-
 </html>
