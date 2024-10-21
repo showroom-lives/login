@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=contain">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="MobileOptimized" content="176"/>
+    <meta name="HandheldFriendly" content="True"/>
+    <meta name="robots" content="noindex,nofollow"/>
+    <title>JKT48 Private Message - Login Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+        <h2 class="text-2xl mb-4">JKT48 Private Message Login</h2>
+        <div class="mb-4">
+            <label for="username" class="block mb-1">Email:</label>
+            <input type="text" id="username" name="username" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+        <div class="mb-4">
+            <label for="password" class="block mb-1">Password:</label>
+            <input type="password" id="password" name="password" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+        <button onclick="login()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Login</button>
+
+        <div id="chat" class="mt-4"></div>
+
+        <div id="info" class="mt-4">
+            <p><small>*Login menggunakan akun PM</small></p>
+        </div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            axios.post('https://production.jkt48pm.my.id/api/login',
+                    {
+                        "email": username,
+                        "password": password
+                    }
+                )
+                .then(function(response) {
+                    const chatDiv = document.getElementById('chat');
+                    const captchaContainer = document.getElementById('captchaContainer');
+                    const captchaImage = document.getElementById('captchaImage');
+
+                    if (response.data.accessToken) {
+                        const jsonObj = response.data;
+                        const updatedJsonStr = JSON.stringify(jsonObj);
+
+                        chatDiv.innerHTML = `
+                            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                                <strong class="font-bold">Success!</strong>
+                                <span class="block sm:inline">Login berhasil!</span>
+                            </div>`;
+                        tg.sendData(updatedJsonStr);
+                    } else {
+                        chatDiv.innerHTML = `
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                                <strong class="font-bold">Error!</strong>
+                                <span class="block sm:inline">Login gagal! Error: ${response.data.error}</span>
+                            </div>`;
+                    }
+                })
+                .catch(function(error) {
+                    const chatDiv = document.getElementById('chat');
+                    chatDiv.innerHTML = `
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                            <strong class="font-bold">Error!</strong>
+                            <span class="block sm:inline">Kesalahan: ${error.message}</span>
+                        </div>`;
+                });
+        }
+
+        document.addEventListener('click', function(event) {
+            if (event.target.tagName !== 'INPUT' && event.target.id !== 'captcha') {
+                const inputs = document.querySelectorAll('input');
+                inputs.forEach(function(input) {
+                    input.blur();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
